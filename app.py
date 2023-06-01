@@ -4,8 +4,9 @@
 import os
 import sys
 import logging
-import requests
+import re
 import sqlite3
+import requests
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -78,6 +79,16 @@ def cwe89(username):
         cursor.execute(query)
 
 
+def filterScriptTags(content):
+    old_content = ""
+    while old_content != content:
+        old_content = content
+        content = re.sub(
+            r"<script.*?>.*?</script>", "", content, flags=re.DOTALL | re.IGNORECASE
+        )
+    return content
+
+
 def cwe22(filename):
     """CWE-22:
     Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')
@@ -101,3 +112,4 @@ if __name__ == "__main__":
     main()
     cwe89(sys.argv[1])
     cwe22(sys.argv[1])
+    filterScriptTags(content=sys.argv[1])
