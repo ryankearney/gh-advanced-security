@@ -4,8 +4,9 @@
 import os
 import sys
 import logging
+import re
+import sqlite3
 import requests
-import mysql.connector
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -45,7 +46,7 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
     try:
         res = ses.post(
             "http://api.example.com/v1/auth",
-            data={"X-Api-Key": "24d4890y13451457891345f1347893461578"},
+            headers={"X-Api-Key": API_KEY},
             timeout=1.0,
         )
 
@@ -56,7 +57,7 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
     try:
         res = requests.post(
             "http://example.com/api/v1/login",
-            data={"Authentication": "Bearer 89y45w347897890yj4890yj34q7890qyj34f345q"},
+            headers={"Authentication": f"Bearer {TOKEN}"},
             timeout=1.0,
         )
         logging.debug(res.status_code)
@@ -66,21 +67,26 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
 
 def cwe89(username):
     """Surfing the tables"""
-
+    connection = sqlite3.connect("tutorial.db")
+    cursor = connection.cursor()
     queries = []
     queries.append("SELECT * FROM `users` WHERE `username` = " + username)
     queries.append("SELECT * FROM `users` WHERE `username` = %s" % username)
     queries.append(f"SELECT * FROM `users` WHERE `username` = {username}")
     queries.append("SELECT * FROM `users` WHERE `username` = {}".format(username))
 
-    try:
-        connection = mysql.connector.connect("localhost", "admin", "hunter2")
-        cursor = connection.cursor()
-        for query in queries:
-            cursor.execute(query)
+    for query in queries:
+        cursor.execute(query)
 
-    except mysql.connector.Error as ex:
-        logging.error("%s", ex)
+
+def filterScriptTags(content):
+    old_content = ""
+    while old_content != content:
+        old_content = content
+        content = re.sub(
+            r"<script.*?>.*?</script>", "", content, flags=re.DOTALL | re.IGNORECASE
+        )
+    return content
 
 
 def cwe22(filename):
@@ -90,7 +96,6 @@ def cwe22(filename):
 
     path1 = os.path.join(os.getcwd(), filename)
     path2 = os.path.normpath(f"{os.getcwd()}{os.sep}{filename}")
-    # Note this is still dangerous, as a user could privde "../../../../etc/passwd"
     try:
         with open(path1, "r", encoding="utf-8") as f:
             file_data = f.read()
@@ -107,3 +112,4 @@ if __name__ == "__main__":
     main()
     cwe89(sys.argv[1])
     cwe22(sys.argv[1])
+    filterScriptTags(content=sys.argv[1])
