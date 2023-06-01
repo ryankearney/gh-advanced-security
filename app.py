@@ -45,7 +45,7 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
     try:
         res = ses.post(
             "http://api.example.com/v1/auth",
-            data={"X-Api-Key": "24d4890y13451457891345f1347893461578"},
+            headers={"X-Api-Key": API_KEY},
             timeout=1.0,
         )
 
@@ -56,7 +56,7 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
     try:
         res = requests.post(
             "http://example.com/api/v1/login",
-            data={"Authentication": "Bearer 89y45w347897890yj4890yj34q7890qyj34f345q"},
+            headers={"Authentication": f"Bearer {TOKEN}"},
             timeout=1.0,
         )
         logging.debug(res.status_code)
@@ -90,7 +90,6 @@ def cwe22(filename):
 
     path1 = os.path.join(os.getcwd(), filename)
     path2 = os.path.normpath(f"{os.getcwd()}{os.sep}{filename}")
-    # Note this is still dangerous, as a user could privde "../../../../etc/passwd"
     try:
         with open(path1, "r", encoding="utf-8") as f:
             file_data = f.read()
