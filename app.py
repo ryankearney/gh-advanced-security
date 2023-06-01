@@ -5,7 +5,7 @@ import os
 import sys
 import logging
 import requests
-import mysql.connector
+import sqlite3
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -66,21 +66,16 @@ v9+GMEc4FrlFHqGZtrScxydzNee2UYQl2MQKJ8IGlIw=
 
 def cwe89(username):
     """Surfing the tables"""
-
+    connection = sqlite3.connect("tutorial.db")
+    cursor = connection.cursor()
     queries = []
     queries.append("SELECT * FROM `users` WHERE `username` = " + username)
     queries.append("SELECT * FROM `users` WHERE `username` = %s" % username)
     queries.append(f"SELECT * FROM `users` WHERE `username` = {username}")
     queries.append("SELECT * FROM `users` WHERE `username` = {}".format(username))
 
-    try:
-        connection = mysql.connector.connect("localhost", "admin", "hunter2")
-        cursor = connection.cursor()
-        for query in queries:
-            cursor.execute(query)
-
-    except mysql.connector.Error as ex:
-        logging.error("%s", ex)
+    for query in queries:
+        cursor.execute(query)
 
 
 def cwe22(filename):
