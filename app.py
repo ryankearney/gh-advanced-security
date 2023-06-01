@@ -75,7 +75,7 @@ def cwe89(username):
     cursor.execute(f"SELECT * FROM `users` WHERE `username` = {username}")
     cursor.execute("SELECT * FROM `users` WHERE `username` = {}".format(username))
 
-
+    
 def filterScriptTags(content):
     old_content = ""
     while old_content != content:
