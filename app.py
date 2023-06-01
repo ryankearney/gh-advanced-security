@@ -69,16 +69,13 @@ def cwe89(username):
     """Surfing the tables"""
     connection = sqlite3.connect("tutorial.db")
     cursor = connection.cursor()
-    queries = []
-    queries.append("SELECT * FROM `users` WHERE `username` = " + username)
-    queries.append("SELECT * FROM `users` WHERE `username` = %s" % username)
-    queries.append(f"SELECT * FROM `users` WHERE `username` = {username}")
-    queries.append("SELECT * FROM `users` WHERE `username` = {}".format(username))
 
-    for query in queries:
-        cursor.execute(query)
+    cursor.execute("SELECT * FROM `users` WHERE `username` = " + username)
+    cursor.execute("SELECT * FROM `users` WHERE `username` = %s" % username)
+    cursor.execute(f"SELECT * FROM `users` WHERE `username` = {username}")
+    cursor.execute("SELECT * FROM `users` WHERE `username` = {}".format(username))
 
-
+    
 def filterScriptTags(content):
     old_content = ""
     while old_content != content:
